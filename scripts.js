@@ -19,13 +19,17 @@ const program = (() => {
 
   function displayCompany(companyList) {
     if (companyList.length === 0) {
-      displayError('Fann ekki fyrirtæki');
+      displayError('Ekkert fyrirtæki fannst fyrir leitarstreng');
       return;
     }
 
     const [{ name }] = companyList;
+    debugger;
+    const [{ sn }] = companyList;
+    const [{ active }] = companyList;
 
     const dl = document.createElement('dl');
+    dl.classList.add('company');
 
     const nameElement = document.createElement('dt');
     nameElement.appendChild(document.createTextNode('Lén'));
@@ -35,12 +39,36 @@ const program = (() => {
     nameValueElement.appendChild(document.createTextNode(name));
     dl.appendChild(nameValueElement);
 
+    const kennitalaElement = document.createElement('dt');
+    kennitalaElement.appendChild(document.createTextNode('Kennitala'));
+    dl.appendChild(kennitalaElement);
+
+    const kennitalaValueElement = document.createElement('dd');
+    kennitalaValueElement.appendChild(document.createTextNode(sn));
+    dl.appendChild(kennitalaValueElement);
+
+    if (active === 1) {
+      const [{ address }] = companyList;
+
+      dl.classList.add('company--active');
+
+      const addressElement = document.createElement('dt');
+      addressElement.appendChild(document.createTextNode('Heimilisfang'));
+      dl.appendChild(addressElement);
+
+      const addressValueElement = document.createElement('dd');
+      addressValueElement.appendChild(document.createTextNode(address));
+      dl.appendChild(addressValueElement);
+    }
+
+    dl.classList.add('company--inactive');
+
     const container = companies.querySelector('.results');
 
     while (container.firstChild) {
       container.removeChild(container.firstChild);
     }
-    
+
     container.appendChild(dl);
   }
 
@@ -52,7 +80,7 @@ const program = (() => {
           return response.json();
         }
 
-        throw new Error('Villa kom upp');
+        throw new Error('Villa við að sækja gögn');
       })
       .then((data) => {
         displayCompany(data.results);
