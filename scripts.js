@@ -5,6 +5,7 @@ const API_URL = 'https://apis.is/company?name=';
  */
 const program = (() => {
   let companies;
+  
 
   function displayError(error) {
     const container = companies.querySelector('.results');
@@ -24,7 +25,6 @@ const program = (() => {
     }
 
     const [{ name }] = companyList;
-    debugger;
     const [{ sn }] = companyList;
     const [{ active }] = companyList;
 
@@ -72,8 +72,30 @@ const program = (() => {
     container.appendChild(dl);
   }
 
+  function loading() {
+    const div = document.createElement('div');
+    div.classList.add('loading');
+    const img = document.createElement('img');
+    img.setAttribute('src', 'loading.gif');
+    div.appendChild(img);
+
+    const text = document.createElement('div');
+    text.appendChild(document.createTextNode('Leita að fyrirtækjum...'));
+    div.appendChild(text);
+
+    const container = companies.querySelector('.results');
+
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+
+    container.appendChild(div);
+
+  }
+
 
   function fetchData(number) {
+    loading();
     fetch(`${API_URL}${number}`)
       .then((response) => {
         if (response.ok) {
