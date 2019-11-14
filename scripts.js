@@ -5,7 +5,6 @@ const API_URL = 'https://apis.is/company?name=';
  */
 const program = (() => {
   let companies;
-  
 
   function displayError(error) {
     const container = companies.querySelector('.results');
@@ -24,52 +23,48 @@ const program = (() => {
       return;
     }
 
-    const [{ name }] = companyList;
-    const [{ sn }] = companyList;
-    const [{ active }] = companyList;
-
-    const dl = document.createElement('dl');
-    dl.classList.add('company');
-
-    const nameElement = document.createElement('dt');
-    nameElement.appendChild(document.createTextNode('Lén'));
-    dl.appendChild(nameElement);
-
-    const nameValueElement = document.createElement('dd');
-    nameValueElement.appendChild(document.createTextNode(name));
-    dl.appendChild(nameValueElement);
-
-    const kennitalaElement = document.createElement('dt');
-    kennitalaElement.appendChild(document.createTextNode('Kennitala'));
-    dl.appendChild(kennitalaElement);
-
-    const kennitalaValueElement = document.createElement('dd');
-    kennitalaValueElement.appendChild(document.createTextNode(sn));
-    dl.appendChild(kennitalaValueElement);
-
-    if (active === 1) {
-      const [{ address }] = companyList;
-
-      dl.classList.add('company--active');
-
-      const addressElement = document.createElement('dt');
-      addressElement.appendChild(document.createTextNode('Heimilisfang'));
-      dl.appendChild(addressElement);
-
-      const addressValueElement = document.createElement('dd');
-      addressValueElement.appendChild(document.createTextNode(address));
-      dl.appendChild(addressValueElement);
-    }
-
-    dl.classList.add('company--inactive');
-
     const container = companies.querySelector('.results');
 
     while (container.firstChild) {
       container.removeChild(container.firstChild);
     }
 
-    container.appendChild(dl);
+    for (let i = 0; i < companyList.length; i += 1) {
+      const dl = document.createElement('dl');
+      dl.classList.add('company');
+
+      const nameElement = document.createElement('dt');
+      nameElement.appendChild(document.createTextNode('Lén'));
+      dl.appendChild(nameElement);
+
+      const nameValueElement = document.createElement('dd');
+      nameValueElement.appendChild(document.createTextNode(companyList[i].name));
+      dl.appendChild(nameValueElement);
+
+      const kennitalaElement = document.createElement('dt');
+      kennitalaElement.appendChild(document.createTextNode('Kennitala'));
+      dl.appendChild(kennitalaElement);
+
+      const kennitalaValueElement = document.createElement('dd');
+      kennitalaValueElement.appendChild(document.createTextNode(companyList[i].sn));
+      dl.appendChild(kennitalaValueElement);
+
+      if (companyList[i].active === 1) {
+        dl.classList.add('company--active');
+
+        const addressElement = document.createElement('dt');
+        addressElement.appendChild(document.createTextNode('Heimilisfang'));
+        dl.appendChild(addressElement);
+
+        const addressValueElement = document.createElement('dd');
+        addressValueElement.appendChild(document.createTextNode(companyList[i].address));
+        dl.appendChild(addressValueElement);
+      } else {
+        dl.classList.add('company--inactive');
+      }
+
+      container.appendChild(dl);
+    }
   }
 
   function loading() {
@@ -77,6 +72,7 @@ const program = (() => {
     div.classList.add('loading');
     const img = document.createElement('img');
     img.setAttribute('src', 'loading.gif');
+    img.classList.add('img');
     div.appendChild(img);
 
     const text = document.createElement('div');
@@ -90,7 +86,6 @@ const program = (() => {
     }
 
     container.appendChild(div);
-
   }
 
 
@@ -108,7 +103,7 @@ const program = (() => {
         displayCompany(data.results);
       })
       .catch((error) => {
-        displayError('Villa!');
+        displayError('Villa við að sækja gögn');
         console.error(error);
       });
   }
@@ -118,7 +113,11 @@ const program = (() => {
 
     const input = e.target.querySelector('input');
 
-    fetchData(input.value);
+    if (input.value === ' ' || input.value === null) {
+      displayError('Lén verður að vera strengur');
+    } else {
+      fetchData(input.value);
+    }
   }
 
   function init(_companies) {
