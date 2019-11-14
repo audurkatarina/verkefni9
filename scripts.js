@@ -113,7 +113,7 @@ const program = (() => {
 
     const input = e.target.querySelector('input');
 
-    if (input.value === ' ' || input.value === null) {
+    if (input.value === ' ' || input.value === '') {
       displayError('Lén verður að vera strengur');
     } else {
       fetchData(input.value);
